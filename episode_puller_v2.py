@@ -34,7 +34,7 @@ class TvShow:
         self.show_json = self.get_show_json()
         self.title_id = self.get_title_id()
         self.all_episodes = self.get_all_episodes()
-      
+        self.num_seasons = self.all_episodes[-1].season
 
 
 
@@ -55,12 +55,12 @@ class TvShow:
         return [Episode(e) for e in episodes_json]
         
 # Return random episode 
-    def random_episode(self, rating=0, earliest_season=0, latest_season=None):
+    def random_episode(self, rating=0, seasons=None):
         if latest_season is None:
-            latest_season = self.all_episodes[-1].season
+            seasons = [num for num in range(self.num_seasons)]
 
         # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
-        valid_episodes = [e for e in self.all_episodes if e.rating != None and e.rating >= rating and e.season >= earliest_season and e.season <= latest_season]
+        valid_episodes = [e for e in self.all_episodes if e.rating != None and e.season in seasons]
         if len(valid_episodes) == 0:
             return "Ur rating is too high fuck nigga, lower ur standards"
         episode = random.choice(valid_episodes)
