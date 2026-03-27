@@ -1,6 +1,5 @@
-
 import requests
-from concurrent.futures import ThreadPoolExecutor
+import random
 
 
 
@@ -13,28 +12,11 @@ class Episode:
     """
     def __init__(self, episode_info):
         self.episode_info = episode_info
+        self.season_and_number = f"S{self.episode_info["season"]}E{self.episode_info["number"]}"
+        self.season = self.episode_info["season"]
         self.name = self.episode_info["name"]
         self.rating = self.episode_info["rating"]["average"]
-
-class Season:
-    """Creates season objects
-
-    :param season_info: Dictionary with season information compiled from TV API call
-    :ivar season_id: API ID for each season
-    :ivar number: Real world season number
-    :ivar episodes: list of episode objects in each season
-    """
-    def __init__(self, season_info):
-        self.season_info = season_info
-        self.season_id = season_info["id"]
-        self.number = season_info["number"]
-        self.episodes = self.get_episodes()
-
-  
-    def get_episodes(self):
-        episode_json = requests.get("https://api.tvmaze.com/seasons/" + str(self.season_id) + "/episodes").json()
-        with ThreadPoolExecutor() as executor:
-            return list(executor.map(Episode, episode_json))
+        self.type = episode_info["type"]
 
 
 
@@ -51,7 +33,7 @@ class TvShow:
         self.show_name = show_name
         self.show_json = self.get_show_json()
         self.title_id = self.get_title_id()
-        self.seasons = self.get_seasons()
+        self.all_episodes = self.get_all_episodes()
       
 
 
@@ -66,13 +48,22 @@ class TvShow:
         id = self.show_json["id"]
         return id
 
-    
-# Return list of season objects
-    def get_seasons(self):
-        seasons_json = requests.get("https://api.tvmaze.com/shows/" + str(self.title_id) + "/seasons").json()
-        with ThreadPoolExecutor() as executor:
-            return list(executor.map(lambda s: Season(s), seasons_json))
 
+    def get_all_episodes(self):
+        episodes_json = requests.get(f"https://api.tvmaze.com/shows/{self.title_id}/episodes").json()
         
+        return [Episode(e) for e in episodes_json]
+        
+# Return random episode 
+    def random_episode(self, rating=0, earliest_season=0, latest_season=None):
+        if latest_season is None:
+            latest_season = self.all_episodes[-1].season
 
+        # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
+        valid_episodes = [e for e in self.all_episodes if e.rating != None and e.rating >= rating and e.season >= earliest_season and e.season <= latest_season]
+        if len(valid_episodes) == 0:
+            return "Ur rating is too high fuck nigga, lower ur standards"
+        episode = random.choice(valid_episodes)
 
+        return f"{episode.season_and_number} {episode.name}"
+        
