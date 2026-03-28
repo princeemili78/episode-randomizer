@@ -29,9 +29,10 @@ class TvShow:
     :ivar seasons: List of seasons object corresponding to number of seasons in show
     """
 
-    def __init__(self, show_name):
-        self.show_name = show_name
-        self.show_json = self.get_show_json()
+    def __init__(self, name):
+        self.name = name
+        self.json = self.get_json()
+        self.picture = self.json["image"]["original"]
         self.title_id = self.get_title_id()
         self.all_episodes = self.get_all_episodes()
         self.num_seasons = self.all_episodes[-1].season
@@ -39,13 +40,13 @@ class TvShow:
 
 
 # Add string for show name to the end of the api address to show json  
-    def get_show_json(self):
-        r = requests.get("https://api.tvmaze.com/singlesearch/shows?q=" + self.show_name)
+    def get_json(self):
+        r = requests.get("https://api.tvmaze.com/singlesearch/shows?q=" + self.name)
         
         return r.json()
     
     def get_title_id(self):
-        id = self.show_json["id"]
+        id = self.json["id"]
         return id
 
 
@@ -56,7 +57,7 @@ class TvShow:
         
 # Return random episode 
     def random_episode(self, rating=0, seasons=None):
-        if latest_season is None:
+        if seasons is None:
             seasons = [num for num in range(self.num_seasons)]
 
         # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
