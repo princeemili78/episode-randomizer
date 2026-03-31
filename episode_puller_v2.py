@@ -13,19 +13,27 @@ class Episode:
     """
     def __init__(self, episode_info):
         self.episode_info = episode_info
-        self.season_and_number = f"S{self.episode_info["season"]}E{self.episode_info["number"]}"
-        self.season = self.episode_info["season"]
-        self.name = self.episode_info["name"]
-        self.rating = self.episode_info["rating"]["average"]
-        self.type = episode_info["type"]
-        self.image = episode_info["image"]["medium"]
-        self.summary = self.get_summary_text()
+        self.season = self.episode_info["season"] if self.check_nulls("season") else "No season info"
+        self.season_and_number = f"S{self.episode_info["season"]}E{self.episode_info["number"]}"     
+        self.name = self.episode_info["name"] if self.check_nulls("name") else "Name not found"
+        self.rating = self.episode_info["rating"]["average"] if self.check_nulls("rating", "average") else "No rating found"
+        self.type = episode_info["type"] if self.check_nulls("type") else "No type found"
+        self.image = episode_info["image"]["medium"] if self.check_nulls("image") and self.check_nulls("image", "medium") else "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+        self.summary = self.get_summary_text() if self.check_nulls("summary") else ""
     
     # Remove HTML tags from episode summary 
     def get_summary_text(self):
         soup = BeautifulSoup(self.episode_info["summary"])
         text = soup.get_text()
         return text
+    
+    # Check for nulls values so we can handle them differently for the use
+    def check_nulls(self, nest_level1, nest_level2=""):
+        if nest_level2 == "":
+            return self.episode_info[nest_level1] != None 
+        else:
+            return self.episode_info[nest_level1][nest_level2] != None
+        
         
 
 class TvShow:

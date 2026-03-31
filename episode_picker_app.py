@@ -25,7 +25,10 @@ if show_name != "" and st.session_state["show_name"] != show_name :
     try:
         st.session_state["show"] = TvShow(show_name)
         st.session_state["show_name"] = show_name
-    except:
+    except Exception as e:
+
+        st.write(e) 
+        
         try:
             st.write(f" Did you mean {fuzzy_search_result(show_name)}")
             st.session_state["show"] = ""
