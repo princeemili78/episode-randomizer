@@ -44,7 +44,7 @@ if show_name != "" and st.session_state["show_name"] != show_name :
 if isinstance(st.session_state["show"], TvShow):
     st.image(st.session_state["show"].picture)         
     rating = st.number_input("Lowest rating", min_value=0.0, max_value=10.0, value="min",format="%0.1f", help="Type the lowest rated episode you'd watch", placeholder="") 
-    seasons = st.multiselect("Seasons", options=range(1, 1 + st.session_state["show"].num_seasons), default=[], help="Select seasons to choose from", placeholder="Choose seasons")
+    seasons = st.multiselect("Seasons", options=st.session_state["show"].season_list, default=[], help="Select seasons to choose from", placeholder="Choose seasons")
     if st.button("Generate episode!") == True:
         try:
             episode = st.session_state["show"].random_episode(rating, seasons)

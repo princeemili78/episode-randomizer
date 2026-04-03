@@ -51,7 +51,8 @@ class TvShow:
         self.picture = self.json["image"]["medium"]
         self.title_id = self.get_title_id()
         self.all_episodes = self.get_all_episodes()
-        self.num_seasons = self.all_episodes[-1].season
+        self.season_list = self.get_season_list()
+        
 
 
 
@@ -72,11 +73,18 @@ class TvShow:
         episodes_json = requests.get(f"https://api.tvmaze.com/shows/{self.title_id}/episodes").json()
         
         return [Episode(e) for e in episodes_json]
+    
+    # Get list of seasons by parsing through episode list for unique season values
+    def get_season_list(self):
+        season_list = []
+        season_list = {self.all_episodes[e].season for e in range(len(self.all_episodes))}
+        return season_list
+    
         
 # Return random episode 
     def random_episode(self, rating=0, seasons=None):
         if seasons == [] or None:
-            seasons = [num for num in range(self.num_seasons)]
+            seasons = self.season_list
 
 
         # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
