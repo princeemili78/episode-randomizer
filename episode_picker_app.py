@@ -43,7 +43,7 @@ if show_name != "" and st.session_state["show_name"] != show_name :
 
 if isinstance(st.session_state["show"], TvShow):
     st.image(st.session_state["show"].picture)         
-    rating = st.number_input("Lowest rating", min_value=0.0, max_value=10.0, value="min",format="%0.1f", help="Type the lowest rated episode you'd watch", placeholder="") 
+    rating = st.number_input("Lowest rating", min_value=0.0, max_value=10.0, value="min",format="%0.1f", help="Type the lowest rated episode you'd watch", placeholder="", step=0.1) 
     seasons = st.multiselect("Seasons", options=st.session_state["show"].season_list, default=[], help="Select seasons to choose from", placeholder="Choose seasons")
     if st.button("Generate episode!") == True:
         try:
@@ -51,6 +51,7 @@ if isinstance(st.session_state["show"], TvShow):
             st.image(episode.image)        
             st.write(f"{episode.season_and_number} {episode.name}")
             st.write(episode.summary)
+            st.components.v1.iframe(f"https://vidsrc-embed.ru/embed/tv/{episode.imdb_id}/{episode.season}-{episode.number}", height=500)
         except Exception as e:
             st.write(e)
 
