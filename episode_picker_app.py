@@ -21,10 +21,17 @@ if "rating" not in st.session_state:
     st.session_state["rating"] = None
 if "seasons" not in st.session_state:
     st.session_state["seasons"] = []
+if "valid_episodes" not in st.session_state:
+    st.session_state["valid_episodes"] = []
+if "episode_error" not in st.session_state:
+    st.session_state["episode_error"] = None
+if "disabled" not in st.session_state:
+    st.session_state["disabled"] = False
 
 if st.session_state["episode_generated"] == False:
     # textbox for user to input show name
-    show_name = st.text_input("Name of Tv Show", help="Type name of show")
+    show_name = st.text_input("Name of Tv Show", help="Type name of show", placeholder=st.session_state["show_name"])
+
     
 
 
@@ -54,12 +61,14 @@ if st.session_state["episode_generated"] == False:
         seasons = st.multiselect("Seasons", options=st.session_state["show"].season_list, default=st.session_state["seasons"], help="Select seasons to choose from", placeholder="Choose seasons")
         if st.button("Generate episode!") == True:
             try:
-                episode = st.session_state["show"].random_episode(rating, seasons)
+                st.session_state["valid_episodes"] = st.session_state["show"].valid_episodes(rating, seasons)
+                episode = st.session_state["show"].random_episode(st.session_state["valid_episodes"])
                 if isinstance(episode, Episode):
                     st.session_state["episode"] = episode
                     st.session_state["rating"] = rating
                     st.session_state["seasons"] = seasons
                     st.session_state["episode_generated"] = True
+                    st.session_state["valid_episodes"].remove(episode)
                     st.rerun()
             except Exception as e:
                 st.write(e)
@@ -69,25 +78,36 @@ else:
     with col1:
         if st.button("Back") == True:
             st.session_state["episode"] = ""
+            st.session_state["valid_episodes"] = []
             st.session_state["episode_generated"] = False
+            st.session_state["episode_error"] = None
+            st.session_state["disabled"] = False
             st.rerun()
     st.markdown(f"# {st.session_state["episode"].name}")
 
     st.components.v1.iframe(f"https://vidsrc-embed.ru/embed/tv/{st.session_state["episode"].imdb_id}/{st.session_state["episode"].season}-{st.session_state["episode"].number}", height=500)
-
+    episode_error = None
     col3, col4 = st.columns([.69, .31])
     with col3:
         st.markdown(f"{st.session_state["episode"].season_and_number}") 
         st.markdown(f"{st.session_state["episode"].rating}:star:")
     with col4:
-        if st.button("Generate another episode!") == True:
+        if st.button("Generate another episode!", disabled=st.session_state["disabled"]) == True:
                 try:
-                    episode = st.session_state["show"].random_episode(st.session_state["rating"], st.session_state["seasons"])
+                    episode = st.session_state["show"].random_episode(st.session_state["valid_episodes"])
                     if isinstance(episode, Episode):
                         st.session_state["episode"] = episode
                         st.session_state["episode_generated"] = True
+                        st.session_state["valid_episodes"].remove(episode)
+                        st.rerun()
                 except Exception as e:
-                    st.write(e)
+                    st.session_state["disabled"] = True
+                    st.session_state["episode_error"] = e
+                    st.rerun()
+                    
+    if st.session_state["episode_error"] != None:
+        with col4:
+            st.write("No more random episodes")
     col5, col6 = st.columns(2)
     col5.image(st.session_state["episode"].image)  
     col6.markdown(st.session_state["episode"].summary)      

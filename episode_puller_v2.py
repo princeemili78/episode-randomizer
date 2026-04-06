@@ -100,8 +100,8 @@ class TvShow:
         return season_list
     
 
-# Return random episode 
-    def random_episode(self, rating=0, seasons=None):
+# Create list of episodes that satisfy seasons and rating requirements
+    def valid_episodes(self, rating=0, seasons=None):
         if seasons == [] or None:
             seasons = self.season_list
         if rating == None:
@@ -112,10 +112,15 @@ class TvShow:
         valid_episodes = [e for e in self.all_episodes if e.rating != None and e.season in seasons and e.rating >= rating]
         if len(valid_episodes) == 0:
             return "Ur rating is too high fuck nigga, lower ur standards"
-        random_episode = random.choice(valid_episodes)
-
-        
-        return random_episode
+        else:
+            return valid_episodes
+# Return random episode 
+    def random_episode(self, valid_episodes):
+        if valid_episodes != []:      
+            random_episode = random.choice(valid_episodes)
+            return random_episode
+        else:
+            raise Exception ("No more random episodes")
         
 
 
