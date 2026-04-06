@@ -16,7 +16,7 @@ class Episode:
         self.imdb_id = imdb_id
         self.season = self.set_self("No season info", "season")
         self.number = self.set_self("No episode number", "number")
-        self.season_and_number = f"S{self.season}E{self.number}"     
+        self.season_and_number = f"Season {self.season} Episode {self.number}"     
         self.name = self.set_self("No episode name", "name")
         self.rating = self.set_self("No rating found", "rating", "average")
         self.type = self.set_self("No type found", "type")
@@ -32,6 +32,8 @@ class Episode:
     def is_null(self, nest_level1, nest_level2=""):
         if nest_level2 == "":
             return self.episode_info[nest_level1] == None 
+        elif self.episode_info[nest_level1] == None:
+            return True
         else:
             return self.episode_info[nest_level1][nest_level2] == None
     
@@ -97,15 +99,17 @@ class TvShow:
         season_list = sorted(season_list)
         return season_list
     
-        
+
 # Return random episode 
     def random_episode(self, rating=0, seasons=None):
         if seasons == [] or None:
             seasons = self.season_list
+        if rating == None:
+            rating = 0
 
 
         # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
-        valid_episodes = [e for e in self.all_episodes if e.rating != None and e.season in seasons]
+        valid_episodes = [e for e in self.all_episodes if e.rating != None and e.season in seasons and e.rating >= rating]
         if len(valid_episodes) == 0:
             return "Ur rating is too high fuck nigga, lower ur standards"
         random_episode = random.choice(valid_episodes)
