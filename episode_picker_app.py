@@ -5,9 +5,9 @@ from episode_puller_v2 import fuzzy_search_result
 
 
 st.title("Random Episodes", text_alignment="center")
-#st.popover("Help", type="tertiary")
 
 
+# Block of if statements below add necessary values to session state so they are tacked each rerun
 if "show" not in st.session_state:
     st.session_state["show"] = ""
     
@@ -37,12 +37,15 @@ if st.session_state["episode_generated"] == False:
 
 
 
-    # create instance of tv show using user input
+# create instance of tv show using user input
+    # If a user has typed a show name that is different from the show that was previously loaded
     if show_name != "" and st.session_state["show_name"] != show_name :
         try:
             st.session_state["show"] = TvShow(show_name)
             st.session_state["show_name"] = show_name
             st.rerun()
+        # If loading a show creates an error, suggests a name that will work 
+        # If no suggestion found, tell user could not find a show with that name
         except Exception as e:     
             try:
                 st.write(f" Did you mean {fuzzy_search_result(show_name)}")
@@ -55,11 +58,12 @@ if st.session_state["episode_generated"] == False:
         
 
 
-
+    # Verify that show is properly loaded
     if isinstance(st.session_state["show"], TvShow):
         st.image(st.session_state["show"].picture)         
         rating = st.number_input("Lowest rating", min_value=0.0, max_value=10.0, value=st.session_state["rating"],format="%0.1f", help="Type the lowest rated episode you'd watch", step=0.5) 
         seasons = st.multiselect("Seasons", options=st.session_state["show"].season_list, default=st.session_state["seasons"], help="Select seasons to choose from", placeholder="Choose seasons")
+        # A list of episodes satisfying the user's requirements is created, then an episode is chosen from it randomly
         if st.button("Generate episode!") == True:
             try:
                 st.session_state["valid_episodes"] = st.session_state["show"].valid_episodes(rating, seasons)
@@ -73,7 +77,7 @@ if st.session_state["episode_generated"] == False:
                     st.rerun()
             except Exception as e:
                 st.write("Could not generate episode, is your rating too high?")
-
+# After an episode has been generated a page with the episode and other information is generated for the user
 else:
     col1, col2 = st.columns(2)
     with col1:

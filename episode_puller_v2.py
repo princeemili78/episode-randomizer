@@ -94,6 +94,25 @@ class TvShow:
         
         return [Episode(e, self.imdb_id) for e in episodes_json]
     
+    # Function to get next episode of TvShow
+    def next_episode(self, episode):
+        if isinstance(episode, Episode) == True:
+            if episode == self.all_episodes[-1]:
+                raise Exception("This is the last episode")
+            episode_index = self.all_episodes.index(episode)
+            next_episode = self.all_episodes[episode_index + 1]
+            return next_episode
+    
+    # Function to get previous episode of TvShow
+    def previous_episode(self, episode):
+        if isinstance(episode, Episode) == True:
+            episode_index = self.all_episodes.index(episode)
+            if episode_index == 0:
+                raise Exception("This is the first episode")
+            previous_episode = self.all_episodes[episode_index - 1]
+            return previous_episode
+
+    
     # Get list of seasons by parsing through episode list for unique season values
     def get_season_list(self):
         season_list = {self.all_episodes[e].season for e in range(len(self.all_episodes))}
