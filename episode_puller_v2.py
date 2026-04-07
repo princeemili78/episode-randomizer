@@ -18,7 +18,7 @@ class Episode:
         self.number = self.set_self("No episode number", "number")
         self.season_and_number = f"Season {self.season} Episode {self.number}"     
         self.name = self.set_self("No episode name", "name")
-        self.rating = self.set_self("No rating found", "rating", "average")
+        self.rating = self.set_self(0, "rating", "average")
         self.type = self.set_self("No type found", "type")
         self.image = self.set_self("https://placehold.co/210x295?text=No+Image", "image", "medium")
         self.summary = self.get_summary_text() if self.is_null("summary") != True else ""
@@ -111,7 +111,7 @@ class TvShow:
         # Create list of episodes that satisfy the user's requirements by filtering with a list comprehension
         valid_episodes = [e for e in self.all_episodes if e.rating != None and e.season in seasons and e.rating >= rating]
         if len(valid_episodes) == 0:
-            return "Ur rating is too high fuck nigga, lower ur standards"
+            raise Exception("Ur rating is too high fuck nigga, lower ur standards")
         else:
             return valid_episodes
 # Return random episode 

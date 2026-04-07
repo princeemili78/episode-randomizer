@@ -42,6 +42,7 @@ if st.session_state["episode_generated"] == False:
         try:
             st.session_state["show"] = TvShow(show_name)
             st.session_state["show_name"] = show_name
+            st.rerun()
         except Exception as e:     
             try:
                 st.write(f" Did you mean {fuzzy_search_result(show_name)}")
@@ -71,7 +72,7 @@ if st.session_state["episode_generated"] == False:
                     st.session_state["valid_episodes"].remove(episode)
                     st.rerun()
             except Exception as e:
-                st.write(e)
+                st.write("Could not generate episode, is your rating too high?")
 
 else:
     col1, col2 = st.columns(2)
@@ -84,13 +85,12 @@ else:
             st.session_state["disabled"] = False
             st.rerun()
     st.markdown(f"# {st.session_state["episode"].name}")
-
-    st.components.v1.iframe(f"https://vidsrc-embed.ru/embed/tv/{st.session_state["episode"].imdb_id}/{st.session_state["episode"].season}-{st.session_state["episode"].number}", height=500)
-    episode_error = None
+    st.components.v1.html(f'<iframe src="https://vidsrc-embed.ru/embed/tv/{st.session_state["episode"].imdb_id}/{st.session_state["episode"].season}-{st.session_state["episode"].number}" width="100%" height="520" allowfullscreen></iframe>', height=520)
     col3, col4 = st.columns([.69, .31])
     with col3:
-        st.markdown(f"{st.session_state["episode"].season_and_number}") 
-        st.markdown(f"{st.session_state["episode"].rating}:star:")
+        st.markdown(f"{st.session_state["episode"].season_and_number}")
+        if st.session_state["episode"].rating != 0: 
+            st.markdown(f"{st.session_state["episode"].rating}:star:")
     with col4:
         if st.button("Generate another episode!", disabled=st.session_state["disabled"]) == True:
                 try:
