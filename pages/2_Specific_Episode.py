@@ -27,11 +27,14 @@ if "previous_episode_error" not in st.session_state:
 if "next_episode_error" not in st.session_state:
     st.session_state["next_episode_error"] = None
 
+if ["user_agent"] not in st.session_state:
+    st.session_state["user_agent"] = st.context.headers.get("User-Agent")
+
 if st.session_state["page_2_episode_generated"] == False:
     # textbox for user to input show name
     show_name = st.text_input("Name of Tv Show", help="Type name of show", placeholder=st.session_state["page_2_show_name"])
 
-    
+
 
 
 
@@ -94,7 +97,16 @@ else:
             st.rerun()
     st.markdown(f"# {st.session_state["page_2_episode"].name}")
     st.markdown(f"{st.session_state["page_2_episode"].summary}")
-    st.components.v1.html(f'<iframe src="https://vidsrc-embed.su/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}-{st.session_state["page_2_episode"].number}" width="100%" height="520" allowfullscreen></iframe>', height=520)
+    if "Firefox" in st.session_state["user_agent"]:
+        st.components.v1.html(f'<iframe src="https://vidsrc-embed.su/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}-{st.session_state["page_2_episode"].number}" width="100%" height=520 allowfullscreen></iframe>', height=520)
+    else:
+    #st.components.v1.html(f'<iframe src="https://vidsrcme.su/embed/tv?imdb={st.session_state["page_2_episode"].imdb_id}&season={st.session_state["page_2_episode"].season}&episode={st.session_state["page_2_episode"].number}" style="width: 100%; height: 100%;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
+        st.components.v1.html(f'<iframe src="https://vidsrc.cc/v2/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height: 520px;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
+        #st.components.v1.html(f'<iframe src="https://vidsrc.cc/v2/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height=520" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
+        #st.components.v1.html(f'<iframe src="https://www.2embed.cc/embedtv/{st.session_state["page_2_episode"].imdb_id}&s={st.session_state["page_2_episode"].season}&e={st.session_state["page_2_episode"].number}" width="100%" height="520" allowfullscreen></iframe>', height=520)
+    #st.components.v1.html(f'<iframe src="https://vidsrc.to/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height: 100%;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
+    #st.components.v1.html(f'<iframe src="https://vidsrc.to/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height: 100%;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
+    #st.components.v1.html(f'<iframe src="https://vidsrcme.su/embed/tv?imdb={st.session_state["page_2_episode"].imdb_id}&season={st.session_state["page_2_episode"].season}&episode={st.session_state["page_2_episode"].number}" style="width: 100%; height: 520;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=520)
     col4, col5 = st.columns([.85, .15])
     with col5:
         if st.button("Next Episode") == True:

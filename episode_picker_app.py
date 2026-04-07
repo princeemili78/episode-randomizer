@@ -27,12 +27,15 @@ if "episode_error" not in st.session_state:
     st.session_state["episode_error"] = None
 if "disabled" not in st.session_state:
     st.session_state["disabled"] = False
+if ["user_agent"] not in st.session_state:
+    st.session_state["user_agent"] = st.context.headers.get("User-Agent")
+
 
 if st.session_state["episode_generated"] == False:
     # textbox for user to input show name
     show_name = st.text_input("Name of Tv Show", help="Type name of show", placeholder=st.session_state["show_name"])
 
-    
+  
 
 
 
