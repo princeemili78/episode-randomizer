@@ -99,17 +99,98 @@ else:
     st.markdown(f"{st.session_state["page_2_episode"].summary}")
     # Send users to either streaming site depending on what browser they are using
     if "Firefox" in st.session_state["user_agent"]:
-        if "Mobile" in st.session_state["user_agent"]:
-            st.components.v1.html(f'<iframe src="https://vidsrc-embed.su/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}-{st.session_state["page_2_episode"].number}" style="width: 100%; height: 220px;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=220)
-        else:
-            st.components.v1.html(f'<iframe src="https://vidsrc-embed.su/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}-{st.session_state["page_2_episode"].number}" width="100%" height=520 allowfullscreen></iframe>', height=520)
+        # Define the URL
+        embed_url = f"https://vidsrc-embed.su/embed/tv/{st.session_state['page_2_episode'].imdb_id}/{st.session_state['page_2_episode'].season}-{st.session_state['page_2_episode'].number}"
+
+        st.markdown(
+            f'''
+            <style>
+                .main-video-wrapper {{
+                    width: 100%;
+                    max-width: 900px; /* Limits size on large desktop screens */
+                    margin: 0 auto;   /* Centers the player */
+                }}
+                .video-container {{
+                    position: relative;
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                    background-color: #000;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Adds a nice "elevated" look on desktop */
+                }}
+                .video-container iframe {{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                }}
+            </style>
+            
+            <div class="main-video-wrapper">
+                <div class="video-container">
+                    <iframe 
+                        src="{embed_url}" 
+                        referrerpolicy="origin" 
+                        sandbox="allow-scripts allow-same-origin"
+                        allow="autoplay; fullscreen; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
+        
     else:
-        if "Mobile" in st.session_state["user_agent"]:
-            st.components.v1.html(f'<iframe src="https://vidsrc.cc/v2/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height: 220px;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>', height=220)
-        else:
-            st.components.v1.html(f'<iframe src="https://vidsrc.cc/v2/embed/tv/{st.session_state["page_2_episode"].imdb_id}/{st.session_state["page_2_episode"].season}/{st.session_state["page_2_episode"].number}" style="width: 100%; height: 520px;" frameborder="0" referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-forms"  allowfullscreen ></iframe>', height=520)
-            # Below is another possible link to use to embed in case this one breaks.
-            #st.components.v1.html(f'<iframe src="https://www.2embed.cc/embedtv/{st.session_state["page_2_episode"].imdb_id}&s={st.session_state["page_2_episode"].season}&e={st.session_state["page_2_episode"].number}" width="100%" height="520" allowfullscreen></iframe>', height=520)
+        # Define the URL
+        embed_url = f"https://vidsrc-embed.su/embed/tv/{st.session_state['page_2_episode'].imdb_id}/{st.session_state['page_2_episode'].season}-{st.session_state['page_2_episode'].number}"
+
+        st.markdown(
+            f'''
+            <style>
+                .main-video-wrapper {{
+                    width: 100%;
+                    max-width: 900px; /* Limits size on large desktop screens */
+                    margin: 0 auto;   /* Centers the player */
+                }}
+                .video-container {{
+                    position: relative;
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                    background-color: #000;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Adds a nice "elevated" look on desktop */
+                }}
+                .video-container iframe {{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                }}
+            </style>
+            
+            <div class="main-video-wrapper">
+                <div class="video-container">
+                    <iframe 
+                        src="{embed_url}" 
+                        referrerpolicy="origin" 
+                        allow="autoplay; fullscreen; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
+
+
+           
     col4, col5 = st.columns([.85, .15])
     with col5:
         if st.button("Next Episode") == True:
